@@ -78,7 +78,14 @@ public class Match {
     }
 
     public String getWinner() {
-        return winner;
+        String string=winner;
+        if(opponentOneScore>opponentTwoScore)
+        string+="("+opponentOneScore+":"+opponentTwoScore+")";
+        else if(opponentTwoScore>opponentOneScore)
+            string+="("+opponentTwoScore+":"+opponentOneScore+")";
+
+        return string;
+
     }
 
     public void setWinner(String winner) {

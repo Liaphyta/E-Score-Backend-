@@ -29,12 +29,12 @@ public class BasicHTTPApiServiceImpl implements BasicHTTPApiService {
         if(whichOne.equals("upcoming"))
         {
             from=date.getTime();
-            cal.add(Calendar.DATE,10);
+            cal.add(Calendar.DATE,15);
             to=cal.getTimeInMillis();
         }
         else
         {
-            cal.add(Calendar.DATE,-10);
+            cal.add(Calendar.DATE,-15);
             from=cal.getTimeInMillis();
             to=date.getTime();
         }

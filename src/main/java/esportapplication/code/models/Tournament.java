@@ -1,6 +1,7 @@
 package esportapplication.code.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -26,10 +27,14 @@ public class Tournament {
     }
 
     public String getBeginAt() {
-        return beginAt;
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+        LocalDateTime time = LocalDateTime.parse(this.beginAt,inputFormatter);
+        String temp=time.getDayOfMonth()+" " + time.getMonth() + " " + time.getYear() + " ";
+        return temp;
     }
 
     public void setBeginAt(String beginAt) {
+
         this.beginAt = beginAt;
     }
 
