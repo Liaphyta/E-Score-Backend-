@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/dota2")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(value="http://localhost:4200", maxAge = 36000)
 public class Dota2Controller {
 
     @Autowired

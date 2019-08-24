@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/csgo")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(value="http://localhost:4200",maxAge = 36000)
 public class CsgoController {
     @Autowired
     BasicHTTPApiService basicHTTPApiService;
