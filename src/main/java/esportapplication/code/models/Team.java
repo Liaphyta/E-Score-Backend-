@@ -1,5 +1,7 @@
 package esportapplication.code.models;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
 
 @Entity @Table(name="Teams")
@@ -10,7 +12,7 @@ public class Team {
     @Column(name="name")
     private String name;
 
-    @Column(name="description")
+    @Column(name="description", length=1000)
     private String description;
 
     @Column(name="imgSource")
@@ -18,6 +20,9 @@ public class Team {
 
     @Column(name="foundedSince")
     private String foundedSince;
+
+    @Column(name="urlTeam")
+    private String urlTeam;
 
     public String getName() {
         return name;
@@ -49,5 +54,13 @@ public class Team {
 
     public void setFoundedSince(String foundedSince) {
         this.foundedSince = foundedSince;
+    }
+
+    public String getUrlTeam() {
+        return urlTeam;
+    }
+
+    public void setUrlTeam(String urlTeam) {
+        this.urlTeam = urlTeam;
     }
 }
