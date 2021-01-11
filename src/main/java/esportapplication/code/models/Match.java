@@ -2,12 +2,9 @@ package esportapplication.code.models;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Locale;
 
@@ -23,16 +20,16 @@ public class Match {
     private String status;
     private String leagueName;
 
-    public Match(String opponentOneName, Integer opponentOneID, Integer opponentOneScore, String opponentTwoName, Integer opponentTwoID, Integer opponentTwoScore, Timestamp time, String status, String leagueName) throws ParseException {
+    public Match(String opponentOneName, Integer opponentOneID, Integer opponentOneScore, String opponentTwoName, Integer opponentTwoID, Integer opponentTwoScore, Date time, String status, String leagueName) throws ParseException {
         this.opponentOneName = opponentOneName;
         this.opponentOneID = opponentOneID;
         this.opponentOneScore = opponentOneScore;
         this.opponentTwoName = opponentTwoName;
         this.opponentTwoID = opponentTwoID;
         this.opponentTwoScore = opponentTwoScore;
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.s", Locale.ENGLISH);
-        this.time = LocalDateTime.parse(time.toString(),inputFormatter);
-//
+        this.time=time.toInstant()
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime();
         this.status = status;
         this.leagueName = leagueName;
 
