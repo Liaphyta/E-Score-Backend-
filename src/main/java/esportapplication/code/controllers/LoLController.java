@@ -25,18 +25,16 @@ public class LoLController {
   }
 
   @GetMapping("/upcomingMatches")
-    public List<Match> showUpcomingMatches(){
-       List<Match> matches=basicHTTPApiService.getMatches("upcoming","lol");
-       return matches;
+    public List<Match> showUpcomingMatches() throws IOException {
+       return basicHTTPApiService.getMatches1("upcoming","lol");
     }
     @GetMapping("/previousMatches")
     public List<Match> showPreviousMatches() throws IOException {
-        List<Match> matches=basicHTTPApiService.getMatches1("previous","lol");
-        return matches;
+        return basicHTTPApiService.getMatches1("previous","lol");
+
     }
     @GetMapping("/tournaments")
     public List<Tournament> showTournaments(){
-        List<Tournament> tournaments=basicHTTPApiService.getTournaments("lol");
-        return tournaments;
+        return basicHTTPApiService.getTournaments("lol");
     }
 }

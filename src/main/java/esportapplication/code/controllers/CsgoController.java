@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -19,18 +20,15 @@ public class CsgoController {
     BasicHTTPApiService basicHTTPApiService;
 
     @GetMapping("/upcomingMatches")
-    public List<Match> showUpcomingMatches(){
-        List<Match> matches=basicHTTPApiService.getMatches("upcoming","csgo");
-        return matches;
+    public List<Match> showUpcomingMatches() throws IOException {
+        return basicHTTPApiService.getMatches1("upcoming","csgo");
     }
     @GetMapping("/previousMatches")
-    public List<Match> showPreviousMatches(){
-        List<Match> matches=basicHTTPApiService.getMatches("previous","csgo");
-        return matches;
+    public List<Match> showPreviousMatches() throws IOException {
+        return basicHTTPApiService.getMatches1("previous","csgo");
     }
     @GetMapping("/tournaments")
     public List<Tournament> showTournaments(){
-        List<Tournament> tournaments=basicHTTPApiService.getTournaments("csgo");
-        return tournaments;
+        return basicHTTPApiService.getTournaments("csgo");
     }
 }

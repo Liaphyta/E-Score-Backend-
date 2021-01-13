@@ -33,7 +33,7 @@ public class Match {
         this.status = status;
         this.leagueName = leagueName;
 
-        if(status.equals("Scheduled"))
+        if(status.equals("not_started"))
             winner="Not yet started";
         else if(opponentOneScore>opponentTwoScore){
             winner=opponentOneName;

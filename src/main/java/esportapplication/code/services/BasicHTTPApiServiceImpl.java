@@ -81,35 +81,50 @@ public class BasicHTTPApiServiceImpl implements BasicHTTPApiService {
 
     public List<Match> getMatches1(String whichOne,String game) throws IOException {
       List<Match> matches=new ArrayList<>();
-      String urlToHit= "https://api.pandascore.co/"+game+"/matches/past?token=S3M8ypVclIOtl3Y1OvPKzrDLd_cGP8YxNt1IfqggtZEPo22JXy8";
+      String urlToHit="";
+      if(whichOne.equals("upcoming"))
+      urlToHit= "https://api.pandascore.co/"+game+"/matches/upcoming?token=S3M8ypVclIOtl3Y1OvPKzrDLd_cGP8YxNt1IfqggtZEPo22JXy8";
+      else
+      urlToHit="https://api.pandascore.co/"+game+"/matches/past?token=S3M8ypVclIOtl3Y1OvPKzrDLd_cGP8YxNt1IfqggtZEPo22JXy8";
       URL url = new URL(urlToHit);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
       BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
       JSONArray jsonArray = new JSONArray(rd.readLine());
-      System.out.println(jsonArray);
       for(int i=0;i<jsonArray.length();i++){
         String name=jsonArray.getJSONObject(i).getString("slug");
         JSONArray opponents=jsonArray.getJSONObject(i).getJSONArray("opponents");
         try {
+            if(opponents.length()>0)
+            {
+
+
           String opponentOneName=opponents.getJSONObject(0).getJSONObject("opponent").getString("name");
-          String opponentTwoName=opponents.getJSONObject(1).getJSONObject("opponent").getString("name");
-          Integer opponentOneId=opponents.getJSONObject(0).getJSONObject("opponent").getInt("id");
-          Integer opponentTwoId=opponents.getJSONObject(1).getJSONObject("opponent").getInt("id");
-          JSONArray results=jsonArray.getJSONObject(i).getJSONArray("results");
+            Integer opponentOneId=opponents.getJSONObject(0).getJSONObject("opponent").getInt("id");
+            JSONArray results=jsonArray.getJSONObject(i).getJSONArray("results");
+            String opponentTwoName="";
+            Integer opponentTwoId=0;
+            Integer opponentTwoScore=0;
+          if(opponents.length()==2)
+          {
+             opponentTwoName=opponents.getJSONObject(1).getJSONObject("opponent").getString("name");
+             opponentTwoId=opponents.getJSONObject(1).getJSONObject("opponent").getInt("id");
+              opponentTwoScore=results.getJSONObject(1).getInt("score");
+          }
           Integer opponentOneScore=results.getJSONObject(0).getInt("score");
-          Integer opponentTwoScore=results.getJSONObject(1).getInt("score");
           Date time = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(jsonArray.getJSONObject(i).getString("original_scheduled_at"));
           String status=jsonArray.getJSONObject(i).getString("status");
           String leagueName=jsonArray.getJSONObject(i).getJSONObject("league").getString("name");
-          Match match = new Match(opponentOneName,opponentOneId,opponentOneScore,
-            opponentTwoName,opponentTwoId,opponentTwoScore,time,status,leagueName);
-          System.out.println(match);
-        } catch (ParseException e) {
+          if(!opponentTwoName.equals(""))
+          matches.add(new Match(opponentOneName,opponentOneId,opponentOneScore,
+                  opponentTwoName,opponentTwoId,opponentTwoScore,time,status,leagueName));
+
+        }
+        }catch (ParseException e) {
           e.printStackTrace();
         }
       }
-      return new ArrayList<>();
+      return matches;
     }
     public List<Tournament>  getTournaments(String game){
         List<Tournament> tournaments=new LinkedList<>();

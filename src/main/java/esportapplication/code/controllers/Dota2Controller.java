@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,23 +26,20 @@ public class Dota2Controller {
     UserRepository userRepository;
 
     @GetMapping("/upcomingMatches")
-    public List<Match> showUpcomingMatches(){
-        List<Match> matches=basicHTTPApiService.getMatches("upcoming","dota2");
-        return matches;
+    public List<Match> showUpcomingMatches() throws IOException {
+        return basicHTTPApiService.getMatches1("upcoming","dota2");
     }
 //    @GetMapping("/test")
 //    public User getUsers(){
 //        return userRepository.getByUsername("Alek");
 //    }
     @GetMapping("/previousMatches")
-    public List<Match> showPreviousMatches(){
-        List<Match> matches=basicHTTPApiService.getMatches("previous","dota2");
-        return matches;
+    public List<Match> showPreviousMatches() throws IOException {
+        return basicHTTPApiService.getMatches1("previous","dota2");
     }
     @GetMapping("/tournaments")
     public List<Tournament> showTournaments(){
-        List<Tournament> tournaments=basicHTTPApiService.getTournaments("dota2");
-        return tournaments;
+        return basicHTTPApiService.getTournaments("dota2");
     }
 
 }
