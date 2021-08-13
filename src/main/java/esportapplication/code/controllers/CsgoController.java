@@ -14,18 +14,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/csgo")
-@CrossOrigin(value="http://localhost:4200",maxAge = 36000)
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:4200"}, maxAge = 36000)
 public class CsgoController {
     @Autowired
     BasicHTTPApiService basicHTTPApiService;
 
     @GetMapping("/upcomingMatches")
     public List<Match> showUpcomingMatches() throws IOException {
-        return basicHTTPApiService.getMatches1("upcoming","csgo");
+        return basicHTTPApiService.getMatches("upcoming","csgo");
     }
     @GetMapping("/previousMatches")
     public List<Match> showPreviousMatches() throws IOException {
-        return basicHTTPApiService.getMatches1("previous","csgo");
+        return basicHTTPApiService.getMatches("previous","csgo");
     }
     @GetMapping("/tournaments")
     public List<Tournament> showTournaments(){

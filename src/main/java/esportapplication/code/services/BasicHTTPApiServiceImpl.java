@@ -4,6 +4,7 @@ import esportapplication.code.models.Match;
 import esportapplication.code.models.Tournament;
 import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
@@ -20,66 +21,8 @@ import java.util.*;
 
 @Service
 public class BasicHTTPApiServiceImpl implements BasicHTTPApiService {
-    public List<Match> getMatches(String whichOne,String game) {
-        Long from;
-        Long to;
-        Date date = new Date();
-        Calendar cal = Calendar.getInstance();
 
-        if(whichOne.equals("upcoming"))
-        {
-            from=date.getTime();
-            cal.add(Calendar.DATE,15);
-            to=cal.getTimeInMillis();
-        }
-        else
-        {
-            cal.add(Calendar.DATE,-15);
-            from=cal.getTimeInMillis();
-            to=date.getTime();
-        }
-        StringBuilder result = new StringBuilder();
-        List<Match> matches=new LinkedList<Match>();
-        try {
-            String urlHelp = "https://api.gamescorekeeper.com/v1/fixtures?sport="+game+"&from=" + from + "&to=" + to;
-            URL url = new URL(urlHelp);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.addRequestProperty("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGVrc2FuZGFyc3RvamtvdjI1NSIsImlzcyI6IkdhbWVTY29yZWtlZXBlciIsImp0aSI6LTM0NjQ0NDQyNTM1NzU2NzIxMDQsImN1c3RvbWVyIjp0cnVlfQ.sOl2abVWQTFgW--tNr1j3UGUab11NUfKIOAtvPLdv2w");
-            conn.setRequestMethod("GET");
-            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            JSONObject json=new JSONObject(rd.readLine());
-            JSONArray jsonFixtures = json.getJSONArray("fixtures");
-            for(int i =0;i<jsonFixtures.length();i++){
-                String opponentOneName,opponentTwoName;
-                Integer opponentOneID,opponentOneScore,opponentTwoID,opponentTwoScore;
-                JSONObject temp=(JSONObject)jsonFixtures.get(i);
-                JSONObject competition = temp.getJSONObject("competition");
-                String competitionName=competition.getString("name");
-                String statusMatch=temp.getString("status");
-                Long startTime=(Long)temp.get("scheduledStartTime");
-                JSONArray participants = temp.getJSONArray("participants");
-                JSONObject opponentOne=(JSONObject)participants.get(0);
-                JSONObject opponentTwo=(JSONObject)participants.get(1);
-                if(!(opponentOne.isNull("name")|| opponentTwo.isNull("name"))){
-                    opponentOneName = opponentOne.getString("name");
-                    opponentOneID = (Integer) opponentOne.get("id");
-                    opponentOneScore = (Integer) opponentOne.get("score");
-                    opponentTwoName = opponentTwo.getString("name");
-                    opponentTwoID = (Integer) opponentTwo.get("id");
-                    opponentTwoScore = (Integer) opponentTwo.get("score");
-                    Match match=new Match(opponentOneName,opponentOneID,opponentOneScore,opponentTwoName,opponentTwoID,opponentTwoScore,new Timestamp(startTime),statusMatch,competitionName);
-                    matches.add(match);
-                }
-            }
-            rd.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return matches;
-    }
-
-    public List<Match> getMatches1(String whichOne,String game) throws IOException {
+    public List<Match> getMatches(String whichOne,String game) throws IOException {
       List<Match> matches=new ArrayList<>();
       String urlToHit="";
       if(whichOne.equals("upcoming"))
@@ -126,6 +69,74 @@ public class BasicHTTPApiServiceImpl implements BasicHTTPApiService {
       }
       return matches;
     }
+
+    @Override
+    public String getChampions() {
+        String urlPageOne= "https://api.pandascore.co/lol/champions?token=S3M8ypVclIOtl3Y1OvPKzrDLd_cGP8YxNt1IfqggtZEPo22JXy8&page[size]=100&page[number]=1";
+        String urlPageTwo= "https://api.pandascore.co/lol/champions?token=S3M8ypVclIOtl3Y1OvPKzrDLd_cGP8YxNt1IfqggtZEPo22JXy8&page[size]=100&page[number]=2";
+        JSONArray sortedJsonArray = new JSONArray();
+        try {
+            URL url = new URL(urlPageOne);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            JSONArray jsonArray = new JSONArray(rd.readLine());
+            URL url1 = new URL(urlPageTwo);
+            HttpURLConnection conn1 = (HttpURLConnection) url1.openConnection();
+            conn1.setRequestMethod("GET");
+            BufferedReader rd1 = new BufferedReader(new InputStreamReader(conn1.getInputStream()));
+            JSONArray jsonArray1 = new JSONArray(rd1.readLine());
+            for (int i = 0; i < jsonArray1.length(); i++) {
+                jsonArray.put(jsonArray1.getJSONObject(i));
+            }
+            List<JSONObject> jsonValues = new ArrayList<JSONObject>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                jsonValues.add(jsonArray.getJSONObject(i));
+            }
+            jsonValues.sort(new Comparator<JSONObject>() {
+                private static final String KEY_NAME = "name";
+
+                @Override
+                public int compare(JSONObject a, JSONObject b) {
+                    String valA = "";
+                    String valB = "";
+
+                    try {
+                        valA = (String) a.get(KEY_NAME);
+                        valB = (String) b.get(KEY_NAME);
+                    } catch (JSONException e) {
+                        //do something
+                    }
+
+                    return valA.compareTo(valB);
+                }
+            });
+            for (int i = 0; i < jsonArray.length(); i++) {
+                sortedJsonArray.put(jsonValues.get(i));
+            }
+            return sortedJsonArray.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "CALL NOT OKAY!";
+    }
+
+    @Override
+    public String getChampion(Long id) {
+        String urlTo= "https://api.pandascore.co/lol/champions/"+id+"?token=S3M8ypVclIOtl3Y1OvPKzrDLd_cGP8YxNt1IfqggtZEPo22JXy8";
+        try {
+            URL url = new URL(urlTo);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            JSONObject jsonObject = new JSONObject(rd.readLine());
+            return jsonObject.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "CALL NOT OKAY!";
+    }
+
     public List<Tournament>  getTournaments(String game){
         List<Tournament> tournaments=new LinkedList<>();
 

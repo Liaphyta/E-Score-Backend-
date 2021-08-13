@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/dota2")
-@CrossOrigin(value="http://localhost:4200", maxAge = 36000)
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:4200"}, maxAge = 36000)
 public class Dota2Controller {
 
     @Autowired
@@ -27,15 +27,12 @@ public class Dota2Controller {
 
     @GetMapping("/upcomingMatches")
     public List<Match> showUpcomingMatches() throws IOException {
-        return basicHTTPApiService.getMatches1("upcoming","dota2");
+        return basicHTTPApiService.getMatches("upcoming","dota2");
     }
-//    @GetMapping("/test")
-//    public User getUsers(){
-//        return userRepository.getByUsername("Alek");
-//    }
+
     @GetMapping("/previousMatches")
     public List<Match> showPreviousMatches() throws IOException {
-        return basicHTTPApiService.getMatches1("previous","dota2");
+        return basicHTTPApiService.getMatches("previous","dota2");
     }
     @GetMapping("/tournaments")
     public List<Tournament> showTournaments(){

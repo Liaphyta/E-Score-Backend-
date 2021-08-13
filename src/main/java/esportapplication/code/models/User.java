@@ -1,43 +1,47 @@
 package esportapplication.code.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.List;
 
 
+@Getter
+@Setter
 @Entity @Table(name="Users")
-public class User {
+public class User implements Serializable {
     @Id @GeneratedValue (strategy = GenerationType.AUTO)
-    long id;
+    Long id;
     @NotNull @Column (name = "username", unique = true)
     private String username;
     @NotNull @Column (name= "password")
     private String password;
 
+    @Column(name = "first_name")
+    private String name;
+
+    @Column(name = "surname")
+    private String surname;
+
+
     @NotNull @Email @Column(name = "email",unique = true)
     private String email;
 
-    public String getUsername() {
-        return username;
-    }
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name="USERS_GROUPS",
+            joinColumns = @JoinColumn( name="USER_ID"),
+            inverseJoinColumns = @JoinColumn( name="GROUP_ID")
+    )
+    List<Group> groups;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    @Transient
+    List<Privilege> privileges;
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }

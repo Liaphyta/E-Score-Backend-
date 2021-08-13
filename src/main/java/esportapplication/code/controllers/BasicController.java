@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/teams")
-@CrossOrigin(value="http://localhost:4200",maxAge = 36000)
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:4200"}, maxAge = 36000)
 public class BasicController {
 
     @Autowired
