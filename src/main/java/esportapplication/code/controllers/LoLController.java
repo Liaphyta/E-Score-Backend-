@@ -4,6 +4,8 @@ import esportapplication.code.models.Match;
 import esportapplication.code.models.Tournament;
 import esportapplication.code.services.BasicHTTPApiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -22,20 +24,28 @@ public class LoLController {
   }
 
   @GetMapping("/upcomingMatches")
-    public List<Match> showUpcomingMatches() throws IOException {
-       return basicHTTPApiService.getMatches("upcoming","lol");
+    public ResponseEntity<List<Match>> showUpcomingMatches() throws IOException {
+      return new ResponseEntity<>(basicHTTPApiService.getMatches("upcoming","lol"), HttpStatus.OK);
     }
     @GetMapping("/previousMatches")
-    public List<Match> showPreviousMatches() throws IOException {
-        return basicHTTPApiService.getMatches("previous","lol");
-
+    public ResponseEntity<List<Match>> showPreviousMatches() throws IOException {
+      return new ResponseEntity<>(basicHTTPApiService.getMatches("previous","lol"),HttpStatus.OK);
     }
     @GetMapping("/tournaments")
-    public List<Tournament> showTournaments(){
-        return basicHTTPApiService.getTournaments("lol");
+    public ResponseEntity<List<Tournament>> showTournaments(){
+
+      return new ResponseEntity<>(basicHTTPApiService.getTournaments("lol"),HttpStatus.OK);
     }
     @GetMapping("/champions")
-    public String getChampions(){return basicHTTPApiService.getChampions();}
+    public ResponseEntity<String> getChampions(){
+      return new ResponseEntity<>(basicHTTPApiService.getChampions(),HttpStatus.OK);
+  }
     @GetMapping("/champions/{id}")
-    public String getChampion(@PathVariable Long id){return basicHTTPApiService.getChampion(id);}
+    public ResponseEntity<String> getChampion(@PathVariable Long id){
+      return new ResponseEntity<>(basicHTTPApiService.getChampion(id),HttpStatus.OK);
+  }
+    @GetMapping("/network")
+    public ResponseEntity<List<Match>> network() throws IOException {
+        return new ResponseEntity<>(basicHTTPApiService.initializeNetwork(),HttpStatus.OK);
+    }
 }

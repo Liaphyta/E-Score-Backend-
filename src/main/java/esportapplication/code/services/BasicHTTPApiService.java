@@ -11,7 +11,9 @@ public interface BasicHTTPApiService {
     public List<Tournament> getTournaments(String game);
     public List<Match> getMatches(String whichOne,String game) throws IOException;
 
-    String getChampions();
+    public List<Match> initializeNetwork() throws IOException;
 
+    String getChampions();
+    void writeHistory(List<Match> matches);
     String getChampion(Long id);
 }
