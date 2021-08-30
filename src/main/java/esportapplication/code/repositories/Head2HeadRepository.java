@@ -13,4 +13,6 @@ public interface Head2HeadRepository extends JpaRepository<Head2Head,Long> {
 
     List<Head2Head> findAllByFirstOpponent(String firstOpponent);
     Head2Head findByFirstOpponentAndSecondOpponent(String firstOpponent, String secondOpponent);
+
+    List<Head2Head> findAllByLeagueName(String leagueName);
 }

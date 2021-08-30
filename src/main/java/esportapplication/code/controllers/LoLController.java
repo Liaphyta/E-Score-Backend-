@@ -1,7 +1,6 @@
 package esportapplication.code.controllers;
 
-import esportapplication.code.models.Match;
-import esportapplication.code.models.Tournament;
+import esportapplication.code.models.*;
 import esportapplication.code.services.BasicHTTPApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,4 +47,30 @@ public class LoLController {
     public ResponseEntity<List<Match>> network() throws IOException {
         return new ResponseEntity<>(basicHTTPApiService.initializeNetwork(),HttpStatus.OK);
     }
+    @GetMapping("/network/{league}")
+    public ResponseEntity<List<Head2Head>> getFixtures(@PathVariable String league){
+    return new ResponseEntity<>(basicHTTPApiService.findAllHead2HeadsBasedOnLeagueName(league),HttpStatus.OK);
+    }
+  @GetMapping("/network/{league}/edges")
+  public ResponseEntity<List<Edge>> getEdges(@PathVariable String league){
+    return new ResponseEntity<>(basicHTTPApiService.getAllEdgesForLeague(league),HttpStatus.OK);
+  }
+  @GetMapping("/network/{league}/nodes")
+  public ResponseEntity<List<Node>> getNodes(@PathVariable String league){
+    return new ResponseEntity<>(basicHTTPApiService.getAllNodesForLeague(league),HttpStatus.OK);
+  }
+  @GetMapping("/network/{league}/graph")
+  public ResponseEntity<Graph> getGraph(@PathVariable String league){
+    return new ResponseEntity<>(basicHTTPApiService.getGraph(league),HttpStatus.OK);
+  }
+  @GetMapping("/network/{league}/teamz")
+  public ResponseEntity<List<String>> getTeams(@PathVariable String league)
+  {
+    return new ResponseEntity<>(basicHTTPApiService.getTeams(league),HttpStatus.OK);
+  }
+  @GetMapping("/network/{league}/{team}")
+  public ResponseEntity<Graph> getGraphBasedOnLeagueAndTeam(@PathVariable String league,@PathVariable String team)
+  {
+    return new ResponseEntity<>(basicHTTPApiService.getGraphBasedOnLeagueAndTeam(league,team),HttpStatus.OK);
+  }
 }

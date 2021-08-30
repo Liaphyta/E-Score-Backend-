@@ -1,8 +1,6 @@
 package esportapplication.code.services;
 
-import esportapplication.code.models.Head2Head;
-import esportapplication.code.models.Match;
-import esportapplication.code.models.Tournament;
+import esportapplication.code.models.*;
 import esportapplication.code.repositories.Head2HeadRepository;
 import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
@@ -126,8 +124,106 @@ public class BasicHTTPApiServiceImpl implements BasicHTTPApiService {
         writeHistory(matches);
         return matches;
     }
+    public List<Head2Head> findAllHead2HeadsBasedOnLeagueName(String leagueName){
+      List<Head2Head> fixtures;
+      fixtures=head2HeadRepository.findAllByLeagueName(leagueName);
+      return fixtures;
+    }
 
-    public void writeHistory(List<Match> matches) {
+  @Override
+  public List<Edge> getAllEdgesForLeague(String leagueName) {
+    List<Edge> edges = new ArrayList<>();
+    List<Head2Head> head2Heads = head2HeadRepository.findAllByLeagueName(leagueName);
+    for(Head2Head head2Head : head2Heads)
+    {
+      Edge edge = new Edge();
+      edge.setFrom(head2Head.getFirstOpponent());
+      edge.setTo(head2Head.getSecondOpponent());
+      edge.setLabel(head2Head.getScoreFirst()+"-"+head2Head.getScoreSecond());
+      edges.add(edge);
+    }
+    System.out.println("VLAGA");
+    return edges;
+  }
+
+  @Override
+  public List<Node> getAllNodesForLeague(String leagueName) {
+    List<Node> nodes = new ArrayList<>();
+    List<Head2Head> head2Heads = head2HeadRepository.findAllByLeagueName(leagueName);
+    Set<String> names = new HashSet<>();
+    for(Head2Head head2Head : head2Heads)
+    {
+      names.add(head2Head.getFirstOpponent());
+      names.add(head2Head.getSecondOpponent());
+//      Node node = new Node();
+//      node.setId(head2Head.getFirstOpponent());
+//      node.setLabel(head2Head.getFirstOpponent());
+//      node.setColor("#ffc107");
+//      nodes.add(node);
+    }
+    Iterator<String> itr = names.iterator();
+    while(itr.hasNext())
+    {
+      Node node=new Node();
+      String name=itr.next();
+      node.setId(name);
+      node.setLabel(name);
+      node.setColor("#ffc107");
+      nodes.add(node);
+    }
+    return nodes;
+  }
+
+  @Override
+  public Graph getGraph(String leagueName) {
+    Graph graph = new Graph();
+    graph.setEdges(getAllEdgesForLeague(leagueName));
+    graph.setNodes(getAllNodesForLeague(leagueName));
+    return graph;
+  }
+
+  @Override
+  public List<String> getTeams(String leagueName) {
+    List<Head2Head> head2Heads = head2HeadRepository.findAllByLeagueName(leagueName);
+    Set<String> names = new HashSet<>();
+    for(Head2Head head2Head : head2Heads) {
+      names.add(head2Head.getFirstOpponent());
+      names.add(head2Head.getSecondOpponent());
+    }
+    ArrayList<String> output=new ArrayList<>(names);
+    return output;
+  }
+
+  @Override
+  public Graph getGraphBasedOnLeagueAndTeam(String leagueName, String team) {
+    Graph graph = new Graph();
+    graph.setNodes(getAllNodesForLeague(leagueName));
+    List<Head2Head> head2Heads = head2HeadRepository.findAllByLeagueName(leagueName);
+    List<Edge> edges = new ArrayList<>();
+    for(Head2Head head2Head : head2Heads)
+    {
+      if(head2Head.getFirstOpponent().contains(team))
+      {
+        Edge edge = new Edge();
+        edge.setFrom(team);
+        edge.setTo(head2Head.getSecondOpponent());
+        edge.setLabel(head2Head.getScoreFirst()+"-"+head2Head.getScoreSecond());
+        edges.add(edge);
+      }
+      else if(head2Head.getSecondOpponent().contains(team))
+      {
+        Edge edge = new Edge();
+        edge.setFrom(team);
+        edge.setTo(head2Head.getFirstOpponent());
+        edge.setLabel(head2Head.getScoreSecond()+"-"+head2Head.getScoreFirst());
+        edges.add(edge);
+      }
+    }
+    graph.setEdges(edges);
+    return graph;
+  }
+
+  public void writeHistory(List<Match> matches) {
         for (Match match : matches) {
             Head2Head head2Head =head2HeadRepository.findByFirstOpponentAndSecondOpponent(match.getOpponentOneName(),match.getOpponentTwoName());
             if(head2Head==null)
